@@ -1,0 +1,51 @@
+package sandy;
+
+/**
+ * Represents a task and whether it has been completed.
+ */
+public class Task {
+    private final String description;
+    private boolean isDone;
+
+    /**
+     * Creates an incomplete task with the given description.
+     *
+     * @param description Text describing the task.
+     */
+    public Task(String description) {
+        this.description = description;
+        this.isDone = false;
+    }
+
+    /**
+     * Returns the task's completion-status icon.
+     *
+     * @return {@code X} when completed, or a space when incomplete.
+     */
+    public String getStatusIcon() {
+        return isDone ? "X" : " ";
+    }
+
+    /**
+     * Returns the text describing this task.
+     *
+     * @return The task description.
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Marks this task as completed.
+     */
+    public void markAsDone() {
+        isDone = true;
+    }
+
+    /**
+     * Marks this task as incomplete.
+     */
+    public void unmarkAsDone() {
+        isDone = false;
+    }
+}
