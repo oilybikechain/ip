@@ -1,11 +1,14 @@
+import java.util.Scanner;
+
 /**
- * Starts Sandy and displays a greeting before ending the conversation.
+ * Starts Sandy and responds to commands entered by the user.
  */
 public class Sandy {
     private static final String SEPARATOR = "____________________________________________________________";
 
     /**
-     * Prints the initial greeting and farewell message.
+     * Prints the initial greeting, echoes commands, and ends the conversation
+     * when the user enters {@code bye}.
      *
      * @param args command-line arguments, which are not used
      */
@@ -21,7 +24,20 @@ public class Sandy {
         System.out.println("Hello! I'm Sandy.");
         System.out.println("What can I do for you?");
         System.out.println(SEPARATOR);
-        System.out.println("Bye. Hope to see you again soon!");
-        System.out.println(SEPARATOR);
+
+        try (Scanner scanner = new Scanner(System.in)) {
+            while (scanner.hasNextLine()) {
+                String command = scanner.nextLine();
+
+                System.out.println(" " + command);
+                System.out.println(SEPARATOR);
+
+                if (command.equals("bye")) {
+                    System.out.println("Bye. Hope to see you again soon!");
+                    System.out.println(SEPARATOR);
+                    break;
+                }
+            }
+        }
     }
 }
