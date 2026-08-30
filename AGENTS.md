@@ -28,6 +28,12 @@ Unless the user says otherwise, assume that you are assisting a student working 
 
 Use the project-local `seedu-java-coding-standard` skill for all Java code created, edited, or reviewed in this repository. All Java code must follow the SE-EDU Java coding standard (basic + intermediate).
 
+## UI test maintenance
+
+After every code update, invoke the project-local `test-ui` skill before completing the task. First decide whether the changed behaviour requires a new or revised UI test case; when it does, update `test/ui-test-plan.md` with the case aim, inputs, and complete expected output before testing. Run the plan and include its console input/output record in the handoff. If a case fails, stop the UI test session at that case and report its expected and actual output.
+
+For Java code updates, apply `seedu-java-coding-standard` before running the UI tests. This is in addition to the existing requirement to use that skill for every Java change or review.
+
 ## Java version:
 
 Ensure that Java 25 is used when running the application or build tasks. On macOS, use `sdk use java 25.0.3.fx-zulu` to switch to Java 25 if needed.

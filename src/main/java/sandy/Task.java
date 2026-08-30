@@ -48,4 +48,14 @@ public class Task {
     public void unmarkAsDone() {
         isDone = false;
     }
+
+    /**
+     * Returns this task's common status and description text.
+     *
+     * @return The status icon followed by the task description.
+     */
+    @Override
+    public String toString() {
+        return "[" + getStatusIcon() + "] " + description;
+    }
 }

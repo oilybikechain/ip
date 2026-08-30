@@ -43,29 +43,75 @@ public class Sandy {
                 } else if (command.equals("list")) {
                     System.out.println(" Here are the tasks in your list:");
                     for (int i = 0; i < taskCount; i++) {
-                        System.out.println(" " + (i + 1) + ".[" + tasks[i].getStatusIcon() + "] "
-                                + tasks[i].getDescription());
+                        System.out.println(" " + (i + 1) + "." + tasks[i]);
                     }
                 } else if (command.startsWith("mark ")) {
                     int taskNumber = Integer.parseInt(command.substring(5));
                     int taskIndex = taskNumber - 1;
                     tasks[taskIndex].markAsDone();
                     System.out.println(" Nice! I've marked this task as done:");
-                    System.out.println("   [X] " + tasks[taskIndex].getDescription());
+                    System.out.println("   " + tasks[taskIndex]);
                 } else if (command.startsWith("unmark ")) {
                     int taskNumber = Integer.parseInt(command.substring(7));
                     int taskIndex = taskNumber - 1;
                     tasks[taskIndex].unmarkAsDone();
                     System.out.println(" OK, I've marked this task as not done yet:");
-                    System.out.println("   [ ] " + tasks[taskIndex].getDescription());
+                    System.out.println("   " + tasks[taskIndex]);
                 } else {
-                    tasks[taskCount] = new Task(command);
+                    boolean isTypedTaskCommand = isTypedTaskCommand(command);
+                    tasks[taskCount] = createTask(command);
                     taskCount++;
-                    System.out.println(" added: " + command);
+                    if (isTypedTaskCommand) {
+                        System.out.println(" Got it. I've added this task:");
+                        System.out.println("   " + tasks[taskCount - 1]);
+                        System.out.println(" Now you have " + taskCount + " tasks in the list.");
+                    } else {
+                        System.out.println(" added: " + command);
+                    }
                 }
 
                 System.out.println(SEPARATOR);
             }
         }
+    }
+
+    /**
+     * Creates the task represented by a user command.
+     *
+     * @param command The command entered by the user.
+     * @return The task described by the command.
+     */
+    private static Task createTask(String command) {
+        if (command.startsWith("todo ")) {
+            return new Todo(command.substring(5));
+        }
+
+        if (command.startsWith("deadline ")) {
+            int byIndex = command.indexOf(" /by ");
+            String description = command.substring(9, byIndex);
+            String by = command.substring(byIndex + 5);
+            return new Deadline(description, by);
+        }
+
+        if (command.startsWith("event ")) {
+            int fromIndex = command.indexOf(" /from ");
+            int toIndex = command.indexOf(" /to ");
+            String description = command.substring(6, fromIndex);
+            String from = command.substring(fromIndex + 7, toIndex);
+            String to = command.substring(toIndex + 5);
+            return new Event(description, from, to);
+        }
+
+        return new Task(command);
+    }
+
+    /**
+     * Returns whether the command creates a task with an explicit type.
+     *
+     * @param command The command entered by the user.
+     * @return Whether the command begins with a supported task-type keyword.
+     */
+    private static boolean isTypedTaskCommand(String command) {
+        return command.startsWith("todo ") || command.startsWith("deadline ") || command.startsWith("event ");
     }
 }
