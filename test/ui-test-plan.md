@@ -138,7 +138,7 @@ ____________________________________________________________
 ## Latest test session
 
 - **Java version:** 25.0.4
-- **Run date:** 2026-08-31
+- **Last run:** 2026-08-31 (session 2)
 - **Result:** Passed — 2 of 2 test cases.
 
 ### Create and display all task types
