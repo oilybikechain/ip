@@ -7,6 +7,12 @@ import java.util.Scanner;
  */
 public class Sandy {
     private static final String SEPARATOR = "____________________________________________________________";
+    private static final String TODO_PREFIX = "todo ";
+    private static final String DEADLINE_PREFIX = "deadline ";
+    private static final String EVENT_PREFIX = "event ";
+    private static final String DEADLINE_BY_DELIMITER = " /by ";
+    private static final String EVENT_FROM_DELIMITER = " /from ";
+    private static final String EVENT_TO_DELIMITER = " /to ";
     private static final int MAX_TASKS = 100;
 
     /**
@@ -82,23 +88,23 @@ public class Sandy {
      * @return The task described by the command.
      */
     private static Task createTask(String command) {
-        if (command.startsWith("todo ")) {
-            return new Todo(command.substring(5));
+        if (command.startsWith(TODO_PREFIX)) {
+            return new Todo(command.substring(TODO_PREFIX.length()));
         }
 
-        if (command.startsWith("deadline ")) {
-            int byIndex = command.indexOf(" /by ");
-            String description = command.substring(9, byIndex);
-            String by = command.substring(byIndex + 5);
+        if (command.startsWith(DEADLINE_PREFIX)) {
+            int byIndex = command.indexOf(DEADLINE_BY_DELIMITER);
+            String description = command.substring(DEADLINE_PREFIX.length(), byIndex);
+            String by = command.substring(byIndex + DEADLINE_BY_DELIMITER.length());
             return new Deadline(description, by);
         }
 
-        if (command.startsWith("event ")) {
-            int fromIndex = command.indexOf(" /from ");
-            int toIndex = command.indexOf(" /to ");
-            String description = command.substring(6, fromIndex);
-            String from = command.substring(fromIndex + 7, toIndex);
-            String to = command.substring(toIndex + 5);
+        if (command.startsWith(EVENT_PREFIX)) {
+            int fromIndex = command.indexOf(EVENT_FROM_DELIMITER);
+            int toIndex = command.indexOf(EVENT_TO_DELIMITER);
+            String description = command.substring(EVENT_PREFIX.length(), fromIndex);
+            String from = command.substring(fromIndex + EVENT_FROM_DELIMITER.length(), toIndex);
+            String to = command.substring(toIndex + EVENT_TO_DELIMITER.length());
             return new Event(description, from, to);
         }
 
@@ -112,6 +118,7 @@ public class Sandy {
      * @return Whether the command begins with a supported task-type keyword.
      */
     private static boolean isTypedTaskCommand(String command) {
-        return command.startsWith("todo ") || command.startsWith("deadline ") || command.startsWith("event ");
+        return command.startsWith(TODO_PREFIX) || command.startsWith(DEADLINE_PREFIX)
+                || command.startsWith(EVENT_PREFIX);
     }
 }
