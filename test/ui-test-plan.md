@@ -17,7 +17,7 @@
 
 ```text
 list
-plan presentation
+todo plan presentation
 list
 mark 1
 list
@@ -43,7 +43,9 @@ ____________________________________________________________
  Here are the tasks in your list:
 ____________________________________________________________
 ____________________________________________________________
- added: plan presentation
+ Got it. I've added this task:
+   [T][ ] plan presentation
+ Now you have 1 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
  Here are the tasks in your list:
@@ -135,11 +137,55 @@ Bye. Hope to see you again soon!
 ____________________________________________________________
 ```
 
+### Handle invalid commands and continue
+
+**Aim:** Verify that invalid commands show useful errors without stopping the command loop.
+
+**Inputs:**
+
+```text
+todo
+blah
+list
+mark abc
+bye
+```
+
+**Expected output:**
+
+```text
+____________________________________________________________
+ ____                  _       
+/ ___|  __ _ _ __   __| |_   _ 
+\___ \ / _` | '_ \ / _` | | | |
+ ___) | (_| | | | | (_| | |_| |
+|____/ \__,_|_| |_|\__,_|\__, |
+                         |___/ 
+Hello! I'm Sandy.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+ Oops! I do not recognize that command.
+____________________________________________________________
+____________________________________________________________
+ Oops! I do not recognize that command.
+____________________________________________________________
+____________________________________________________________
+ Here are the tasks in your list:
+____________________________________________________________
+____________________________________________________________
+ Oops! Please provide a valid task number.
+____________________________________________________________
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
 ## Latest test session
 
 - **Java version:** 25.0.4
-- **Last run:** 2026-08-31 (session 2)
-- **Result:** Passed — 2 of 2 test cases.
+- **Last run:** 2026-09-06 (session 1)
+- **Result:** Passed — 3 of 3 test cases.
 
 ### Create and display all task types
 
