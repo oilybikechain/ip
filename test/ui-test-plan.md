@@ -3,7 +3,7 @@
 ## Test configuration
 
 - **Java version:** Java 25
-- **Build command:** `javac -d out src/main/java/sandy/*.java`
+- **Build command:** `javac -d out (Get-ChildItem -Path src/main/java -Filter *.java -Recurse).FullName`
 - **Run command:** `java -cp out sandy.Sandy`
 - **Comparison rule:** Exact output after line-ending normalization only.
 

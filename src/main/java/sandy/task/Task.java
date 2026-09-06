@@ -1,4 +1,4 @@
-package sandy;
+package sandy.task;
 
 /**
  * Represents a task and whether it has been completed.
