@@ -1,4 +1,4 @@
-package sandy;
+package sandy.exception;
 
 /**
  * Represents an error caused by an invalid command entered for Sandy.
