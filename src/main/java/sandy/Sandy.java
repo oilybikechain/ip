@@ -32,11 +32,16 @@ public class Sandy {
         try (Scanner scanner = new Scanner(System.in)) {
             while (scanner.hasNextLine()) {
                 String command = scanner.nextLine();
-                int updatedTaskCount = processCommand(command, tasks, taskCount);
-                if (updatedTaskCount == EXIT_REQUESTED) {
-                    break;
+                try {
+                    int updatedTaskCount = processCommand(command, tasks, taskCount);
+                    if (updatedTaskCount == EXIT_REQUESTED) {
+                        break;
+                    }
+                    taskCount = updatedTaskCount;
+                } catch (SandyException exception) {
+                    System.out.println(" Oops! " + exception.getMessage());
+                    System.out.println(SEPARATOR);
                 }
-                taskCount = updatedTaskCount;
             }
         }
     }
@@ -65,8 +70,9 @@ public class Sandy {
      * @param tasks The tasks managed by the application.
      * @param taskCount The number of tasks currently stored.
      * @return The updated task count, or {@value #EXIT_REQUESTED} when the user exits.
+     * @throws SandyException If the command is invalid.
      */
-    private static int processCommand(String command, Task[] tasks, int taskCount) {
+    private static int processCommand(String command, Task[] tasks, int taskCount) throws SandyException {
         System.out.println(SEPARATOR);
 
         if (command.equals("bye")) {
@@ -108,9 +114,10 @@ public class Sandy {
      * @param tasks The tasks managed by the application.
      * @param command The command containing the task number.
      */
-    private static void markTask(Task[] tasks, String command) {
-        int taskNumber = Integer.parseInt(command.substring(MARK_PREFIX.length()));
+    private static void markTask(Task[] tasks, String command) throws SandyException {
+        int taskNumber = parseTaskNumber(command.substring(MARK_PREFIX.length()));
         int taskIndex = taskNumber - 1;
+        validateTaskIndex(taskIndex, taskCount(tasks));
         tasks[taskIndex].markAsDone();
         System.out.println(" Nice! I've marked this task as done:");
         System.out.println("   " + tasks[taskIndex]);
@@ -122,9 +129,10 @@ public class Sandy {
      * @param tasks The tasks managed by the application.
      * @param command The command containing the task number.
      */
-    private static void unmarkTask(Task[] tasks, String command) {
-        int taskNumber = Integer.parseInt(command.substring(UNMARK_PREFIX.length()));
+    private static void unmarkTask(Task[] tasks, String command) throws SandyException {
+        int taskNumber = parseTaskNumber(command.substring(UNMARK_PREFIX.length()));
         int taskIndex = taskNumber - 1;
+        validateTaskIndex(taskIndex, taskCount(tasks));
         tasks[taskIndex].unmarkAsDone();
         System.out.println(" OK, I've marked this task as not done yet:");
         System.out.println("   " + tasks[taskIndex]);
@@ -138,7 +146,10 @@ public class Sandy {
      * @param taskCount The number of tasks currently stored.
      * @return The number of tasks after adding the new task.
      */
-    private static int addTask(String command, Task[] tasks, int taskCount) {
+    private static int addTask(String command, Task[] tasks, int taskCount) throws SandyException {
+        if (taskCount == MAX_TASKS) {
+            throw new SandyException("Your task list is full.");
+        }
         boolean isTypedTaskCommand = isTypedTaskCommand(command);
         tasks[taskCount] = createTask(command);
         int updatedTaskCount = taskCount + 1;
@@ -158,28 +169,69 @@ public class Sandy {
      * @param command The command entered by the user.
      * @return The task described by the command.
      */
-    private static Task createTask(String command) {
-        if (command.startsWith(TODO_PREFIX)) {
-            return new Todo(command.substring(TODO_PREFIX.length()));
+    private static Task createTask(String command) throws SandyException {
+        if (command.equals("todo") || command.startsWith(TODO_PREFIX)) {
+            String description = command.equals("todo") ? "" : command.substring(TODO_PREFIX.length());
+            return new Todo(requireDescription(description, "todo"));
         }
 
         if (command.startsWith(DEADLINE_PREFIX)) {
             int byIndex = command.indexOf(DEADLINE_BY_DELIMITER);
+            if (byIndex < DEADLINE_PREFIX.length()) {
+                throw new SandyException("A deadline must have a description and a /by value.");
+            }
             String description = command.substring(DEADLINE_PREFIX.length(), byIndex);
             String by = command.substring(byIndex + DEADLINE_BY_DELIMITER.length());
+            requireDescription(description, "deadline");
+            requireDescription(by, "deadline");
             return new Deadline(description, by);
         }
 
         if (command.startsWith(EVENT_PREFIX)) {
             int fromIndex = command.indexOf(EVENT_FROM_DELIMITER);
             int toIndex = command.indexOf(EVENT_TO_DELIMITER);
+            if (fromIndex < EVENT_PREFIX.length() || toIndex < fromIndex) {
+                throw new SandyException("An event must have a description, /from value, and /to value.");
+            }
             String description = command.substring(EVENT_PREFIX.length(), fromIndex);
             String from = command.substring(fromIndex + EVENT_FROM_DELIMITER.length(), toIndex);
             String to = command.substring(toIndex + EVENT_TO_DELIMITER.length());
+            requireDescription(description, "event");
+            requireDescription(from, "event");
+            requireDescription(to, "event");
             return new Event(description, from, to);
         }
 
-        return new Task(command);
+        throw new SandyException("I do not recognize that command.");
+    }
+
+    private static String requireDescription(String text, String taskType) throws SandyException {
+        if (text.trim().isEmpty()) {
+            throw new SandyException("The description of a " + taskType + " cannot be empty.");
+        }
+        return text;
+    }
+
+    private static int parseTaskNumber(String text) throws SandyException {
+        try {
+            return Integer.parseInt(text.trim());
+        } catch (NumberFormatException exception) {
+            throw new SandyException("Please provide a valid task number.");
+        }
+    }
+
+    private static void validateTaskIndex(int taskIndex, int taskCount) throws SandyException {
+        if (taskIndex < 0 || taskIndex >= taskCount) {
+            throw new SandyException("That task number does not exist.");
+        }
+    }
+
+    private static int taskCount(Task[] tasks) {
+        int count = 0;
+        while (count < tasks.length && tasks[count] != null) {
+            count++;
+        }
+        return count;
     }
 
     /**
