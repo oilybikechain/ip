@@ -20,6 +20,14 @@ public class Event extends Task {
         this.to = to;
     }
 
+    public String getFrom() {
+        return from;
+    }
+
+    public String getTo() {
+        return to;
+    }
+
     /**
      * Returns this event in the user-interface format.
      *

@@ -1,11 +1,15 @@
 package sandy;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Scanner;
+
 import sandy.exception.SandyException;
+import sandy.storage.Storage;
 import sandy.task.Deadline;
 import sandy.task.Event;
 import sandy.task.Task;
 import sandy.task.Todo;
-import java.util.Scanner;
 
 /**
  * Starts Sandy and responds to commands entered by the user.
@@ -20,8 +24,10 @@ public class Sandy {
     private static final String DEADLINE_BY_DELIMITER = " /by ";
     private static final String EVENT_FROM_DELIMITER = " /from ";
     private static final String EVENT_TO_DELIMITER = " /to ";
+    private static final Path DATA_FILE_PATH = Path.of("data", "sandy.txt");
     private static final int MAX_TASKS = 100;
     private static final int EXIT_REQUESTED = -1;
+    private static final Storage STORAGE = new Storage(DATA_FILE_PATH);
 
     /**
      * Starts the Sandy command loop.
@@ -32,7 +38,7 @@ public class Sandy {
         printWelcomeMessage();
 
         Task[] tasks = new Task[MAX_TASKS];
-        int taskCount = 0;
+        int taskCount = loadTasks(tasks);
 
         try (Scanner scanner = new Scanner(System.in)) {
             while (scanner.hasNextLine()) {
@@ -90,10 +96,13 @@ public class Sandy {
             printTaskList(tasks, taskCount);
         } else if (command.startsWith(MARK_PREFIX)) {
             markTask(tasks, command);
+            saveTasks(tasks, taskCount);
         } else if (command.startsWith(UNMARK_PREFIX)) {
             unmarkTask(tasks, command);
+            saveTasks(tasks, taskCount);
         } else {
             taskCount = addTask(command, tasks, taskCount);
+            saveTasks(tasks, taskCount);
         }
 
         System.out.println(SEPARATOR);
@@ -237,6 +246,37 @@ public class Sandy {
             count++;
         }
         return count;
+    }
+
+    /**
+     * Loads saved tasks without preventing the application from starting if loading fails.
+     *
+     * @param tasks The array into which saved tasks are loaded.
+     * @return The number of tasks loaded successfully.
+     */
+    private static int loadTasks(Task[] tasks) {
+        try {
+            return STORAGE.loadTasks(tasks);
+        } catch (IOException | SandyException exception) {
+            System.out.println(SEPARATOR);
+            System.out.println(" Oops! I could not load saved tasks: " + exception.getMessage());
+            System.out.println(SEPARATOR);
+            return 0;
+        }
+    }
+
+    /**
+     * Saves all current tasks and reports an error without stopping the command loop.
+     *
+     * @param tasks The tasks managed by the application.
+     * @param taskCount The number of tasks currently stored.
+     */
+    private static void saveTasks(Task[] tasks, int taskCount) {
+        try {
+            STORAGE.saveTasks(tasks, taskCount);
+        } catch (IOException exception) {
+            System.out.println(" Oops! I could not save your tasks.");
+        }
     }
 
     /**

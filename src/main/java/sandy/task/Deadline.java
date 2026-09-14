@@ -17,6 +17,10 @@ public class Deadline extends Task {
         this.by = by;
     }
 
+    public String getBy() {
+        return by;
+    }
+
     /**
      * Returns this deadline in the user-interface format.
      *
