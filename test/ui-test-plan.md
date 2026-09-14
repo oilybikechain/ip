@@ -49,23 +49,23 @@ ____________________________________________________________
 ____________________________________________________________
 ____________________________________________________________
  Here are the tasks in your list:
- 1.[ ] plan presentation
+ 1.[T][ ] plan presentation
 ____________________________________________________________
 ____________________________________________________________
  Nice! I've marked this task as done:
-   [X] plan presentation
+   [T][X] plan presentation
 ____________________________________________________________
 ____________________________________________________________
  Here are the tasks in your list:
- 1.[X] plan presentation
+ 1.[T][X] plan presentation
 ____________________________________________________________
 ____________________________________________________________
  OK, I've marked this task as not done yet:
-   [ ] plan presentation
+   [T][ ] plan presentation
 ____________________________________________________________
 ____________________________________________________________
  Here are the tasks in your list:
- 1.[ ] plan presentation
+ 1.[T][ ] plan presentation
 ____________________________________________________________
 ____________________________________________________________
 Bye. Hope to see you again soon!
@@ -137,17 +137,18 @@ Bye. Hope to see you again soon!
 ____________________________________________________________
 ```
 
-### Handle invalid commands and continue
+### Delete a task from the middle of the list
 
-**Aim:** Verify that invalid commands show useful errors without stopping the command loop.
+**Aim:** Verify that deleting a task reports the removed task, updates the task count, and renumbers the remaining tasks.
 
 **Inputs:**
 
 ```text
-todo
-blah
+todo borrow book
+deadline return book /by Sunday
+event project meeting /from Mon 2pm /to 4pm
+delete 2
 list
-mark abc
 bye
 ```
 
@@ -165,7 +166,66 @@ Hello! I'm Sandy.
 What can I do for you?
 ____________________________________________________________
 ____________________________________________________________
- Oops! I do not recognize that command.
+ Got it. I've added this task:
+   [T][ ] borrow book
+ Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [D][ ] return book (by: Sunday)
+ Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [E][ ] project meeting (from: Mon 2pm to: 4pm)
+ Now you have 3 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Noted. I've removed this task:
+   [D][ ] return book (by: Sunday)
+ Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Here are the tasks in your list:
+ 1.[T][ ] borrow book
+ 2.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+____________________________________________________________
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+### Handle invalid commands and continue
+
+**Aim:** Verify that invalid commands show useful errors without stopping the command loop.
+
+**Inputs:**
+
+```text
+todo
+blah
+list
+mark abc
+delete abc
+delete 1
+bye
+```
+
+**Expected output:**
+
+```text
+____________________________________________________________
+ ____                  _       
+/ ___|  __ _ _ __   __| |_   _ 
+\___ \ / _` | '_ \ / _` | | | |
+ ___) | (_| | | | | (_| | |_| |
+|____/ \__,_|_| |_|\__,_|\__, |
+                         |___/ 
+Hello! I'm Sandy.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+ Oops! The description of a todo cannot be empty.
 ____________________________________________________________
 ____________________________________________________________
  Oops! I do not recognize that command.
@@ -177,11 +237,253 @@ ____________________________________________________________
  Oops! Please provide a valid task number.
 ____________________________________________________________
 ____________________________________________________________
+ Oops! Please provide a valid task number.
+____________________________________________________________
+____________________________________________________________
+ Oops! That task number does not exist.
+____________________________________________________________
+____________________________________________________________
 Bye. Hope to see you again soon!
 ____________________________________________________________
 ```
 
 ## Latest test session
+
+- **Java version:** 25.0.4
+- **Last run:** 2026-09-15
+- **Result:** Passed - 4 of 4 test cases.
+
+### Add, list, mark, and unmark a task
+
+**Console input:**
+
+```text
+list
+todo plan presentation
+list
+mark 1
+list
+unmark 1
+list
+bye
+```
+
+**Console output:**
+
+```text
+____________________________________________________________
+ ____                  _       
+/ ___|  __ _ _ __   __| |_   _ 
+\___ \ / _` | '_ \ / _` | | | |
+ ___) | (_| | | | | (_| | |_| |
+|____/ \__,_|_| |_|\__,_|\__, |
+                         |___/ 
+Hello! I'm Sandy.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+ Here are the tasks in your list:
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [T][ ] plan presentation
+ Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Here are the tasks in your list:
+ 1.[T][ ] plan presentation
+____________________________________________________________
+____________________________________________________________
+ Nice! I've marked this task as done:
+   [T][X] plan presentation
+____________________________________________________________
+____________________________________________________________
+ Here are the tasks in your list:
+ 1.[T][X] plan presentation
+____________________________________________________________
+____________________________________________________________
+ OK, I've marked this task as not done yet:
+   [T][ ] plan presentation
+____________________________________________________________
+____________________________________________________________
+ Here are the tasks in your list:
+ 1.[T][ ] plan presentation
+____________________________________________________________
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+### Create and display all task types
+
+**Console input:**
+
+```text
+todo borrow book
+deadline return book /by Sunday
+event project meeting /from Mon 2pm /to 4pm
+deadline do homework /by no idea :-p
+mark 2
+list
+bye
+```
+
+**Console output:**
+
+```text
+____________________________________________________________
+ ____                  _       
+/ ___|  __ _ _ __   __| |_   _ 
+\___ \ / _` | '_ \ / _` | | | |
+ ___) | (_| | | | | (_| | |_| |
+|____/ \__,_|_| |_|\__,_|\__, |
+                         |___/ 
+Hello! I'm Sandy.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [T][ ] borrow book
+ Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [D][ ] return book (by: Sunday)
+ Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [E][ ] project meeting (from: Mon 2pm to: 4pm)
+ Now you have 3 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [D][ ] do homework (by: no idea :-p)
+ Now you have 4 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Nice! I've marked this task as done:
+   [D][X] return book (by: Sunday)
+____________________________________________________________
+____________________________________________________________
+ Here are the tasks in your list:
+ 1.[T][ ] borrow book
+ 2.[D][X] return book (by: Sunday)
+ 3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+ 4.[D][ ] do homework (by: no idea :-p)
+____________________________________________________________
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+### Delete a task from the middle of the list
+
+**Console input:**
+
+```text
+todo borrow book
+deadline return book /by Sunday
+event project meeting /from Mon 2pm /to 4pm
+delete 2
+list
+bye
+```
+
+**Console output:**
+
+```text
+____________________________________________________________
+ ____                  _       
+/ ___|  __ _ _ __   __| |_   _ 
+\___ \ / _` | '_ \ / _` | | | |
+ ___) | (_| | | | | (_| | |_| |
+|____/ \__,_|_| |_|\__,_|\__, |
+                         |___/ 
+Hello! I'm Sandy.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [T][ ] borrow book
+ Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [D][ ] return book (by: Sunday)
+ Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [E][ ] project meeting (from: Mon 2pm to: 4pm)
+ Now you have 3 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Noted. I've removed this task:
+   [D][ ] return book (by: Sunday)
+ Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Here are the tasks in your list:
+ 1.[T][ ] borrow book
+ 2.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+____________________________________________________________
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+### Handle invalid commands and continue
+
+**Console input:**
+
+```text
+todo
+blah
+list
+mark abc
+delete abc
+delete 1
+bye
+```
+
+**Console output:**
+
+```text
+____________________________________________________________
+ ____                  _       
+/ ___|  __ _ _ __   __| |_   _ 
+\___ \ / _` | '_ \ / _` | | | |
+ ___) | (_| | | | | (_| | |_| |
+|____/ \__,_|_| |_|\__,_|\__, |
+                         |___/ 
+Hello! I'm Sandy.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+ Oops! The description of a todo cannot be empty.
+____________________________________________________________
+____________________________________________________________
+ Oops! I do not recognize that command.
+____________________________________________________________
+____________________________________________________________
+ Here are the tasks in your list:
+____________________________________________________________
+____________________________________________________________
+ Oops! Please provide a valid task number.
+____________________________________________________________
+____________________________________________________________
+ Oops! Please provide a valid task number.
+____________________________________________________________
+____________________________________________________________
+ Oops! That task number does not exist.
+____________________________________________________________
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Previous test session
 
 - **Java version:** 25.0.4
 - **Last run:** 2026-09-06 (session 1)
