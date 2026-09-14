@@ -1,10 +1,13 @@
 package sandy;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 import sandy.exception.SandyException;
+import sandy.storage.Storage;
 import sandy.task.Deadline;
 import sandy.task.Event;
 import sandy.task.Task;
@@ -24,6 +27,8 @@ public class Sandy {
     private static final String DEADLINE_BY_DELIMITER = " /by ";
     private static final String EVENT_FROM_DELIMITER = " /from ";
     private static final String EVENT_TO_DELIMITER = " /to ";
+    private static final Path DATA_FILE_PATH = Path.of("data", "sandy.txt");
+    private static final Storage STORAGE = new Storage(DATA_FILE_PATH);
 
     /**
      * Starts the Sandy command loop.
@@ -33,7 +38,7 @@ public class Sandy {
     public static void main(String[] args) {
         printWelcomeMessage();
 
-        List<Task> tasks = new ArrayList<>();
+        List<Task> tasks = loadTasks();
 
         try (Scanner scanner = new Scanner(System.in)) {
             while (scanner.hasNextLine()) {
@@ -88,12 +93,16 @@ public class Sandy {
             printTaskList(tasks);
         } else if (command.startsWith(MARK_PREFIX)) {
             markTask(tasks, command);
+            saveTasks(tasks);
         } else if (command.startsWith(UNMARK_PREFIX)) {
             unmarkTask(tasks, command);
+            saveTasks(tasks);
         } else if (command.startsWith(DELETE_PREFIX)) {
             deleteTask(tasks, command);
+            saveTasks(tasks);
         } else {
             addTask(command, tasks);
+            saveTasks(tasks);
         }
 
         System.out.println(SEPARATOR);
@@ -241,6 +250,35 @@ public class Sandy {
     private static void validateTaskIndex(int taskIndex, int taskCount) throws SandyException {
         if (taskIndex < 0 || taskIndex >= taskCount) {
             throw new SandyException("That task number does not exist.");
+        }
+    }
+
+    /**
+     * Loads saved tasks without preventing the application from starting if loading fails.
+     *
+     * @return The saved tasks, or an empty list if loading fails.
+     */
+    private static List<Task> loadTasks() {
+        try {
+            return STORAGE.loadTasks();
+        } catch (IOException | SandyException exception) {
+            System.out.println(SEPARATOR);
+            System.out.println(" Oops! I could not load saved tasks: " + exception.getMessage());
+            System.out.println(SEPARATOR);
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Saves all current tasks and reports an error without stopping the command loop.
+     *
+     * @param tasks The tasks managed by the application.
+     */
+    private static void saveTasks(List<Task> tasks) {
+        try {
+            STORAGE.saveTasks(tasks);
+        } catch (IOException exception) {
+            System.out.println(" Oops! I could not save your tasks.");
         }
     }
 
