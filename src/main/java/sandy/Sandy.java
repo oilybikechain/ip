@@ -1,11 +1,14 @@
 package sandy;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
 import sandy.exception.SandyException;
 import sandy.task.Deadline;
 import sandy.task.Event;
 import sandy.task.Task;
 import sandy.task.Todo;
-import java.util.Scanner;
 
 /**
  * Starts Sandy and responds to commands entered by the user.
@@ -17,11 +20,10 @@ public class Sandy {
     private static final String EVENT_PREFIX = "event ";
     private static final String MARK_PREFIX = "mark ";
     private static final String UNMARK_PREFIX = "unmark ";
+    private static final String DELETE_PREFIX = "delete ";
     private static final String DEADLINE_BY_DELIMITER = " /by ";
     private static final String EVENT_FROM_DELIMITER = " /from ";
     private static final String EVENT_TO_DELIMITER = " /to ";
-    private static final int MAX_TASKS = 100;
-    private static final int EXIT_REQUESTED = -1;
 
     /**
      * Starts the Sandy command loop.
@@ -31,18 +33,15 @@ public class Sandy {
     public static void main(String[] args) {
         printWelcomeMessage();
 
-        Task[] tasks = new Task[MAX_TASKS];
-        int taskCount = 0;
+        List<Task> tasks = new ArrayList<>();
 
         try (Scanner scanner = new Scanner(System.in)) {
             while (scanner.hasNextLine()) {
                 String command = scanner.nextLine();
                 try {
-                    int updatedTaskCount = processCommand(command, tasks, taskCount);
-                    if (updatedTaskCount == EXIT_REQUESTED) {
+                    if (processCommand(command, tasks)) {
                         break;
                     }
-                    taskCount = updatedTaskCount;
                 } catch (SandyException exception) {
                     System.out.println(" Oops! " + exception.getMessage());
                     System.out.println(SEPARATOR);
@@ -69,47 +68,47 @@ public class Sandy {
     }
 
     /**
-     * Processes one command and returns the resulting number of tasks.
+     * Processes one command and reports whether the user requested an exit.
      *
      * @param command The command entered by the user.
      * @param tasks The tasks managed by the application.
-     * @param taskCount The number of tasks currently stored.
-     * @return The updated task count, or {@value #EXIT_REQUESTED} when the user exits.
+     * @return {@code true} when the user exits, or {@code false} otherwise.
      * @throws SandyException If the command is invalid.
      */
-    private static int processCommand(String command, Task[] tasks, int taskCount) throws SandyException {
+    private static boolean processCommand(String command, List<Task> tasks) throws SandyException {
         System.out.println(SEPARATOR);
 
         if (command.equals("bye")) {
             System.out.println("Bye. Hope to see you again soon!");
             System.out.println(SEPARATOR);
-            return EXIT_REQUESTED;
+            return true;
         }
 
         if (command.equals("list")) {
-            printTaskList(tasks, taskCount);
+            printTaskList(tasks);
         } else if (command.startsWith(MARK_PREFIX)) {
             markTask(tasks, command);
         } else if (command.startsWith(UNMARK_PREFIX)) {
             unmarkTask(tasks, command);
+        } else if (command.startsWith(DELETE_PREFIX)) {
+            deleteTask(tasks, command);
         } else {
-            taskCount = addTask(command, tasks, taskCount);
+            addTask(command, tasks);
         }
 
         System.out.println(SEPARATOR);
-        return taskCount;
+        return false;
     }
 
     /**
      * Prints all tasks currently stored by the application.
      *
      * @param tasks The tasks managed by the application.
-     * @param taskCount The number of tasks currently stored.
      */
-    private static void printTaskList(Task[] tasks, int taskCount) {
+    private static void printTaskList(List<Task> tasks) {
         System.out.println(" Here are the tasks in your list:");
-        for (int i = 0; i < taskCount; i++) {
-            System.out.println(" " + (i + 1) + "." + tasks[i]);
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println(" " + (i + 1) + "." + tasks.get(i));
         }
     }
 
@@ -119,13 +118,14 @@ public class Sandy {
      * @param tasks The tasks managed by the application.
      * @param command The command containing the task number.
      */
-    private static void markTask(Task[] tasks, String command) throws SandyException {
+    private static void markTask(List<Task> tasks, String command) throws SandyException {
         int taskNumber = parseTaskNumber(command.substring(MARK_PREFIX.length()));
         int taskIndex = taskNumber - 1;
-        validateTaskIndex(taskIndex, taskCount(tasks));
-        tasks[taskIndex].markAsDone();
+        validateTaskIndex(taskIndex, tasks.size());
+        Task task = tasks.get(taskIndex);
+        task.markAsDone();
         System.out.println(" Nice! I've marked this task as done:");
-        System.out.println("   " + tasks[taskIndex]);
+        System.out.println("   " + task);
     }
 
     /**
@@ -134,13 +134,31 @@ public class Sandy {
      * @param tasks The tasks managed by the application.
      * @param command The command containing the task number.
      */
-    private static void unmarkTask(Task[] tasks, String command) throws SandyException {
+    private static void unmarkTask(List<Task> tasks, String command) throws SandyException {
         int taskNumber = parseTaskNumber(command.substring(UNMARK_PREFIX.length()));
         int taskIndex = taskNumber - 1;
-        validateTaskIndex(taskIndex, taskCount(tasks));
-        tasks[taskIndex].unmarkAsDone();
+        validateTaskIndex(taskIndex, tasks.size());
+        Task task = tasks.get(taskIndex);
+        task.unmarkAsDone();
         System.out.println(" OK, I've marked this task as not done yet:");
-        System.out.println("   " + tasks[taskIndex]);
+        System.out.println("   " + task);
+    }
+
+    /**
+     * Deletes the task selected by the command.
+     *
+     * @param tasks The tasks managed by the application.
+     * @param command The command containing the task number.
+     * @throws SandyException If the task number is invalid or does not exist.
+     */
+    private static void deleteTask(List<Task> tasks, String command) throws SandyException {
+        int taskNumber = parseTaskNumber(command.substring(DELETE_PREFIX.length()));
+        int taskIndex = taskNumber - 1;
+        validateTaskIndex(taskIndex, tasks.size());
+        Task deletedTask = tasks.remove(taskIndex);
+        System.out.println(" Noted. I've removed this task:");
+        System.out.println("   " + deletedTask);
+        System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
     }
 
     /**
@@ -148,24 +166,19 @@ public class Sandy {
      *
      * @param command The command entered by the user.
      * @param tasks The tasks managed by the application.
-     * @param taskCount The number of tasks currently stored.
-     * @return The number of tasks after adding the new task.
+     * @throws SandyException If the command does not describe a valid task.
      */
-    private static int addTask(String command, Task[] tasks, int taskCount) throws SandyException {
-        if (taskCount == MAX_TASKS) {
-            throw new SandyException("Your task list is full.");
-        }
+    private static void addTask(String command, List<Task> tasks) throws SandyException {
         boolean isTypedTaskCommand = isTypedTaskCommand(command);
-        tasks[taskCount] = createTask(command);
-        int updatedTaskCount = taskCount + 1;
+        Task task = createTask(command);
+        tasks.add(task);
         if (isTypedTaskCommand) {
             System.out.println(" Got it. I've added this task:");
-            System.out.println("   " + tasks[taskCount]);
-            System.out.println(" Now you have " + updatedTaskCount + " tasks in the list.");
+            System.out.println("   " + task);
+            System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
         } else {
             System.out.println(" added: " + command);
         }
-        return updatedTaskCount;
     }
 
     /**
@@ -229,14 +242,6 @@ public class Sandy {
         if (taskIndex < 0 || taskIndex >= taskCount) {
             throw new SandyException("That task number does not exist.");
         }
-    }
-
-    private static int taskCount(Task[] tasks) {
-        int count = 0;
-        while (count < tasks.length && tasks[count] != null) {
-            count++;
-        }
-        return count;
     }
 
     /**
