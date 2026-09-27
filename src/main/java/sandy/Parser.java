@@ -1,5 +1,11 @@
 package sandy;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
+
 import sandy.command.AddCommand;
 import sandy.command.Command;
 import sandy.command.DeleteCommand;
@@ -26,6 +32,8 @@ public final class Parser {
     private static final String MARK_PREFIX = "mark ";
     private static final String UNMARK_PREFIX = "unmark ";
     private static final String DELETE_PREFIX = "delete ";
+    private static final DateTimeFormatter DAY_MONTH_YEAR_TIME_FORMAT =
+            DateTimeFormatter.ofPattern("d/M/uuuu HHmm").withResolverStyle(ResolverStyle.STRICT);
 
     private Parser() {
     }
@@ -71,7 +79,7 @@ public final class Parser {
             String by = command.substring(byIndex + DEADLINE_BY_DELIMITER.length());
             requireDescription(description, "deadline");
             requireDescription(by, "deadline");
-            return new Deadline(description, by);
+            return new Deadline(description, parseDeadlineDate(by));
         }
 
         if (command.startsWith(EVENT_PREFIX)) {
@@ -104,6 +112,29 @@ public final class Parser {
             return Integer.parseInt(text.trim());
         } catch (NumberFormatException exception) {
             throw new SandyException("Please provide a valid task number.");
+        }
+    }
+
+    /**
+     * Parses an ISO date, an ISO date-time, or a day/month/year date-time.
+     *
+     * @param dateText The deadline date or date-time entered by the user.
+     * @return The parsed deadline, with date-only values set to midnight.
+     * @throws SandyException If the input does not match a supported format.
+     */
+    private static LocalDateTime parseDeadlineDate(String dateText) throws SandyException {
+        try {
+            return LocalDateTime.parse(dateText, DAY_MONTH_YEAR_TIME_FORMAT);
+        } catch (DateTimeParseException exception) {
+            try {
+                return LocalDateTime.parse(dateText);
+            } catch (DateTimeParseException secondException) {
+                try {
+                    return LocalDate.parse(dateText).atStartOfDay();
+                } catch (DateTimeParseException thirdException) {
+                    throw new SandyException("Please provide a deadline date in yyyy-MM-dd or d/M/yyyy HHmm format.");
+                }
+            }
         }
     }
 

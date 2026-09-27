@@ -75,15 +75,15 @@ ____________________________________________________________
 
 ### Create and display all task types
 
-**Aim:** Verify that todos, deadlines, and events are stored as `Task` objects, retain date/time text as entered, and display their type and completion status correctly.
+**Aim:** Verify that deadlines parse ISO dates and date-times, display formatted dates and times, persist ISO values, and that all task types display correctly.
 
 **Inputs:**
 
 ```text
 todo borrow book
-deadline return book /by Sunday
+deadline return book /by 2/12/2019 1800
 event project meeting /from Mon 2pm /to 4pm
-deadline do homework /by no idea :-p
+deadline do homework /by 2020-02-03
 mark 2
 list
 bye
@@ -109,7 +109,7 @@ ____________________________________________________________
 ____________________________________________________________
 ____________________________________________________________
  Got it. I've added this task:
-   [D][ ] return book (by: Sunday)
+   [D][ ] return book (by: Dec 02 2019 6:00 PM)
  Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
@@ -119,19 +119,19 @@ ____________________________________________________________
 ____________________________________________________________
 ____________________________________________________________
  Got it. I've added this task:
-   [D][ ] do homework (by: no idea :-p)
+   [D][ ] do homework (by: Feb 03 2020)
  Now you have 4 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
  Nice! I've marked this task as done:
-   [D][X] return book (by: Sunday)
+   [D][X] return book (by: Dec 02 2019 6:00 PM)
 ____________________________________________________________
 ____________________________________________________________
  Here are the tasks in your list:
  1.[T][ ] borrow book
- 2.[D][X] return book (by: Sunday)
+ 2.[D][X] return book (by: Dec 02 2019 6:00 PM)
  3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
- 4.[D][ ] do homework (by: no idea :-p)
+ 4.[D][ ] do homework (by: Feb 03 2020)
 ____________________________________________________________
 ____________________________________________________________
 Bye. Hope to see you again soon!
@@ -142,9 +142,9 @@ ____________________________________________________________
 
 ```text
 T | 0 | borrow book
-D | 1 | return book | Sunday
+D | 1 | return book | 2019-12-02T18:00
 E | 0 | project meeting | Mon 2pm | 4pm
-D | 0 | do homework | no idea :-p
+D | 0 | do homework | 2020-02-03
 ```
 
 ### Load tasks from an existing data file
@@ -155,7 +155,7 @@ D | 0 | do homework | no idea :-p
 
 ```text
 T | 1 | read book
-D | 0 | return book | June 6th
+D | 0 | return book | 2019-06-06T18:00
 E | 0 | project meeting | Aug 6th 2pm | 4pm
 ```
 
@@ -182,7 +182,7 @@ ____________________________________________________________
 ____________________________________________________________
  Here are the tasks in your list:
  1.[T][X] read book
- 2.[D][ ] return book (by: June 6th)
+ 2.[D][ ] return book (by: Jun 06 2019 6:00 PM)
  3.[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
 ____________________________________________________________
 ____________________________________________________________
@@ -198,7 +198,7 @@ ____________________________________________________________
 
 ```text
 todo borrow book
-deadline return book /by Sunday
+deadline return book /by 2019-12-02
 event project meeting /from Mon 2pm /to 4pm
 delete 2
 list
@@ -225,7 +225,7 @@ ____________________________________________________________
 ____________________________________________________________
 ____________________________________________________________
  Got it. I've added this task:
-   [D][ ] return book (by: Sunday)
+   [D][ ] return book (by: Dec 02 2019)
  Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
@@ -235,7 +235,7 @@ ____________________________________________________________
 ____________________________________________________________
 ____________________________________________________________
  Noted. I've removed this task:
-   [D][ ] return book (by: Sunday)
+   [D][ ] return book (by: Dec 02 2019)
  Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
@@ -264,6 +264,7 @@ E | 0 | project meeting | Mon 2pm | 4pm
 ```text
 todo
 blah
+deadline submit tax return /by 2019-02-30
 list
 mark abc
 delete abc
@@ -291,6 +292,9 @@ ____________________________________________________________
  Oops! I do not recognize that command.
 ____________________________________________________________
 ____________________________________________________________
+ Oops! Please provide a deadline date in yyyy-MM-dd or d/M/yyyy HHmm format.
+____________________________________________________________
+____________________________________________________________
  Here are the tasks in your list:
 ____________________________________________________________
 ____________________________________________________________
@@ -314,7 +318,7 @@ ____________________________________________________________
 **Data-file setup:**
 
 ```text
-invalid saved task
+D | 0 | return book | 2019-02-30
 ```
 
 **Inputs:**
@@ -351,8 +355,8 @@ ____________________________________________________________
 ## Latest test session
 
 - **Java version:** 25.0.4
-- **Last run:** 2026-09-15
-- **Result:** Passed - 6 of 6 test cases.
+- **Last run:** 2026-09-27
+- **Result:** Passed - 6 of 6 test cases; deadline date/time input, display, and persistence verified.
 
 ### Add, list, mark, and unmark a task
 
@@ -421,9 +425,9 @@ ____________________________________________________________
 
 ```text
 todo borrow book
-deadline return book /by Sunday
+deadline return book /by 2/12/2019 1800
 event project meeting /from Mon 2pm /to 4pm
-deadline do homework /by no idea :-p
+deadline do homework /by 2020-02-03
 mark 2
 list
 bye
@@ -449,7 +453,7 @@ ____________________________________________________________
 ____________________________________________________________
 ____________________________________________________________
  Got it. I've added this task:
-   [D][ ] return book (by: Sunday)
+   [D][ ] return book (by: Dec 02 2019 6:00 PM)
  Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
@@ -459,19 +463,19 @@ ____________________________________________________________
 ____________________________________________________________
 ____________________________________________________________
  Got it. I've added this task:
-   [D][ ] do homework (by: no idea :-p)
+   [D][ ] do homework (by: Feb 03 2020)
  Now you have 4 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
  Nice! I've marked this task as done:
-   [D][X] return book (by: Sunday)
+   [D][X] return book (by: Dec 02 2019 6:00 PM)
 ____________________________________________________________
 ____________________________________________________________
  Here are the tasks in your list:
  1.[T][ ] borrow book
- 2.[D][X] return book (by: Sunday)
+ 2.[D][X] return book (by: Dec 02 2019 6:00 PM)
  3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
- 4.[D][ ] do homework (by: no idea :-p)
+ 4.[D][ ] do homework (by: Feb 03 2020)
 ____________________________________________________________
 ____________________________________________________________
 Bye. Hope to see you again soon!
@@ -482,9 +486,9 @@ ____________________________________________________________
 
 ```text
 T | 0 | borrow book
-D | 1 | return book | Sunday
+D | 1 | return book | 2019-12-02T18:00
 E | 0 | project meeting | Mon 2pm | 4pm
-D | 0 | do homework | no idea :-p
+D | 0 | do homework | 2020-02-03
 ```
 
 ### Load tasks from an existing data file
@@ -493,7 +497,7 @@ D | 0 | do homework | no idea :-p
 
 ```text
 T | 1 | read book
-D | 0 | return book | June 6th
+D | 0 | return book | 2019-06-06T18:00
 E | 0 | project meeting | Aug 6th 2pm | 4pm
 ```
 
@@ -520,7 +524,7 @@ ____________________________________________________________
 ____________________________________________________________
  Here are the tasks in your list:
  1.[T][X] read book
- 2.[D][ ] return book (by: June 6th)
+ 2.[D][ ] return book (by: Jun 06 2019 6:00 PM)
  3.[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
 ____________________________________________________________
 ____________________________________________________________
@@ -534,7 +538,7 @@ ____________________________________________________________
 
 ```text
 todo borrow book
-deadline return book /by Sunday
+deadline return book /by 2019-12-02
 event project meeting /from Mon 2pm /to 4pm
 delete 2
 list
@@ -561,7 +565,7 @@ ____________________________________________________________
 ____________________________________________________________
 ____________________________________________________________
  Got it. I've added this task:
-   [D][ ] return book (by: Sunday)
+   [D][ ] return book (by: Dec 02 2019)
  Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
@@ -571,7 +575,7 @@ ____________________________________________________________
 ____________________________________________________________
 ____________________________________________________________
  Noted. I've removed this task:
-   [D][ ] return book (by: Sunday)
+   [D][ ] return book (by: Dec 02 2019)
  Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
@@ -598,6 +602,7 @@ E | 0 | project meeting | Mon 2pm | 4pm
 ```text
 todo
 blah
+deadline submit tax return /by 2019-02-30
 list
 mark abc
 delete abc
@@ -625,6 +630,9 @@ ____________________________________________________________
  Oops! I do not recognize that command.
 ____________________________________________________________
 ____________________________________________________________
+ Oops! Please provide a deadline date in yyyy-MM-dd or d/M/yyyy HHmm format.
+____________________________________________________________
+____________________________________________________________
  Here are the tasks in your list:
 ____________________________________________________________
 ____________________________________________________________
@@ -646,7 +654,7 @@ ____________________________________________________________
 **Data-file setup:**
 
 ```text
-invalid saved task
+D | 0 | return book | 2019-02-30
 ```
 
 **Console input:**

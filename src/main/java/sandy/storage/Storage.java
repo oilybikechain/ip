@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,7 +100,7 @@ public class Storage {
             if (fields.length != 4 || fields[3].isEmpty()) {
                 throw corruptedDataException(lineNumber);
             }
-            task = new Deadline(fields[2], fields[3]);
+            task = new Deadline(fields[2], parseDeadlineDate(fields[3], lineNumber));
             break;
         case "E":
             if (fields.length != 5 || fields[3].isEmpty() || fields[4].isEmpty()) {
@@ -128,7 +132,9 @@ public class Storage {
         if (task instanceof Todo) {
             return String.join(FIELD_DELIMITER, "T", status, task.getDescription());
         } else if (task instanceof Deadline deadline) {
-            return String.join(FIELD_DELIMITER, "D", status, task.getDescription(), deadline.getBy());
+            String dateTime = deadline.getDateTime().toLocalTime().equals(LocalTime.MIDNIGHT)
+                    ? deadline.getDateTime().toLocalDate().toString() : deadline.getDateTime().toString();
+            return String.join(FIELD_DELIMITER, "D", status, task.getDescription(), dateTime);
         } else if (task instanceof Event event) {
             return String.join(FIELD_DELIMITER, "E", status, task.getDescription(), event.getFrom(), event.getTo());
         }
@@ -143,5 +149,25 @@ public class Storage {
      */
     private SandyException corruptedDataException(int lineNumber) {
         return new SandyException("The data file is corrupted at line " + lineNumber + ".");
+    }
+
+    /**
+     * Parses a stored ISO date or date-time and identifies malformed task data.
+     *
+     * @param dateText The stored date value.
+     * @param lineNumber The one-based line containing the value.
+     * @return The parsed deadline, with date-only values set to midnight.
+     * @throws SandyException If the value is not a supported ISO date or date-time.
+     */
+    private LocalDateTime parseDeadlineDate(String dateText, int lineNumber) throws SandyException {
+        try {
+            return LocalDateTime.parse(dateText);
+        } catch (DateTimeParseException exception) {
+            try {
+                return LocalDate.parse(dateText).atStartOfDay();
+            } catch (DateTimeParseException secondException) {
+                throw corruptedDataException(lineNumber);
+            }
+        }
     }
 }
