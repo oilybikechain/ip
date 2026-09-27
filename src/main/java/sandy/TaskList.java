@@ -100,6 +100,12 @@ public class TaskList {
         return Collections.unmodifiableList(matchingTasks);
     }
 
+    /**
+     * Checks that a zero-based task index refers to an existing task.
+     *
+     * @param taskIndex The zero-based task index to check.
+     * @throws SandyException If the index is outside the list.
+     */
     private void validateTaskIndex(int taskIndex) throws SandyException {
         if (taskIndex < 0 || taskIndex >= tasks.size()) {
             throw new SandyException("That task number does not exist.");

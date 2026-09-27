@@ -21,6 +21,14 @@ public class DeleteCommand extends Command {
         this.taskNumber = taskNumber;
     }
 
+    /**
+     * Deletes the selected task, displays confirmation, and saves the updated list.
+     *
+     * @param tasks The tasks managed by the application.
+     * @param ui The console interface.
+     * @param storage The task storage.
+     * @throws SandyException If the task number does not exist.
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws SandyException {
         Task deletedTask = tasks.deleteTask(taskNumber);

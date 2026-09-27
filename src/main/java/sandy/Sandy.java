@@ -71,6 +71,11 @@ public class Sandy {
         new Sandy().run();
     }
 
+    /**
+     * Loads saved tasks, reporting an error and returning an empty list if loading fails.
+     *
+     * @return The loaded tasks, or an empty task list after a loading error.
+     */
     private TaskList loadTasks() {
         try {
             return new TaskList(storage.loadTasks());

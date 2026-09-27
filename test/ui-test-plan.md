@@ -416,7 +416,7 @@ ____________________________________________________________
 
 - **Java version:** 25.0.4
 - **Last run:** 2026-09-27
-- **Result:** Passed - 7 of 7 test cases; find matching, no-match, and empty-keyword behavior verified.
+- **Result:** Passed - 7 of 7 cases after Javadoc additions.
 
 ### Add, list, mark, and unmark a task
 

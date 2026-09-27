@@ -19,6 +19,13 @@ public class FindCommand extends Command {
         this.keyword = keyword;
     }
 
+    /**
+     * Finds and displays tasks whose descriptions contain the keyword.
+     *
+     * @param tasks The tasks to search.
+     * @param ui The console interface.
+     * @param storage Unused because searching does not modify task data.
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) {
         ui.showMatchingTasks(tasks.findTasks(keyword));

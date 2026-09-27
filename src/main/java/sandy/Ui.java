@@ -155,6 +155,9 @@ public class Ui implements AutoCloseable {
         System.out.println("Bye. Hope to see you again soon!");
     }
 
+    /**
+     * Closes the console input scanner.
+     */
     @Override
     public void close() {
         scanner.close();

@@ -35,6 +35,11 @@ public class Task {
         return description;
     }
 
+    /**
+     * Returns whether this task is complete.
+     *
+     * @return {@code true} if this task is complete.
+     */
     public boolean isDone() {
         return isDone;
     }

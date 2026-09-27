@@ -21,6 +21,14 @@ public class UnmarkCommand extends Command {
         this.taskNumber = taskNumber;
     }
 
+    /**
+     * Marks the selected task incomplete and saves the updated list.
+     *
+     * @param tasks The tasks managed by the application.
+     * @param ui The console interface.
+     * @param storage The task storage.
+     * @throws SandyException If the task number does not exist.
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws SandyException {
         Task task = tasks.getTask(taskNumber);

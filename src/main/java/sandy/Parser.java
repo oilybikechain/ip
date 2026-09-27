@@ -73,6 +73,13 @@ public final class Parser {
         return new AddCommand(parseTask(command));
     }
 
+    /**
+     * Converts a task-creation command into the task it describes.
+     *
+     * @param command The complete task command.
+     * @return The task represented by the command.
+     * @throws SandyException If the command does not describe a valid task.
+     */
     private static Task parseTask(String command) throws SandyException {
         if (command.equals("todo") || command.startsWith(TODO_PREFIX)) {
             String description = command.equals("todo") ? "" : command.substring(TODO_PREFIX.length());
@@ -147,6 +154,14 @@ public final class Parser {
         }
     }
 
+    /**
+     * Returns non-blank text or reports that the task field is missing.
+     *
+     * @param text The field value to validate.
+     * @param taskType The task type used in the error message.
+     * @return The validated text.
+     * @throws SandyException If the text is blank.
+     */
     private static String requireDescription(String text, String taskType) throws SandyException {
         if (text.trim().isEmpty()) {
             throw new SandyException("The description of a " + taskType + " cannot be empty.");
