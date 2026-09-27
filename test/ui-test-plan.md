@@ -73,6 +73,62 @@ Bye. Hope to see you again soon!
 ____________________________________________________________
 ```
 
+### Find matching tasks
+
+**Aim:** Verify that `find` displays all descriptions containing the keyword in task-list order and shows the matching-results heading when there are no matches.
+
+**Inputs:**
+
+```text
+todo read book
+deadline return book /by 2019-06-06
+todo buy groceries
+find book
+find pen
+bye
+```
+
+**Expected output:**
+
+```text
+____________________________________________________________
+ ____                  _       
+/ ___|  __ _ _ __   __| |_   _ 
+\___ \ / _` | '_ \ / _` | | | |
+ ___) | (_| | | | | (_| | |_| |
+|____/ \__,_|_| |_|\__,_|\__, |
+                         |___/ 
+Hello! I'm Sandy.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [T][ ] read book
+ Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [D][ ] return book (by: Jun 06 2019)
+ Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [T][ ] buy groceries
+ Now you have 3 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Here are the matching tasks in your list:
+ 1.[T][ ] read book
+ 2.[D][ ] return book (by: Jun 06 2019)
+____________________________________________________________
+____________________________________________________________
+ Here are the matching tasks in your list:
+____________________________________________________________
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
 ### Create and display all task types
 
 **Aim:** Verify that deadlines parse ISO dates and date-times, display formatted dates and times, persist ISO values, and that all task types display correctly.
@@ -264,6 +320,7 @@ E | 0 | project meeting | Mon 2pm | 4pm
 ```text
 todo
 blah
+find
 deadline submit tax return /by 2019-02-30
 list
 mark abc
@@ -290,6 +347,9 @@ ____________________________________________________________
 ____________________________________________________________
 ____________________________________________________________
  Oops! I do not recognize that command.
+____________________________________________________________
+____________________________________________________________
+ Oops! Please provide a keyword to search for.
 ____________________________________________________________
 ____________________________________________________________
  Oops! Please provide a deadline date in yyyy-MM-dd or d/M/yyyy HHmm format.
@@ -356,7 +416,7 @@ ____________________________________________________________
 
 - **Java version:** 25.0.4
 - **Last run:** 2026-09-27
-- **Result:** Passed - 6 of 6 test cases; deadline date/time input, display, and persistence verified.
+- **Result:** Passed - 7 of 7 test cases; find matching, no-match, and empty-keyword behavior verified.
 
 ### Add, list, mark, and unmark a task
 
@@ -413,6 +473,60 @@ ____________________________________________________________
 ____________________________________________________________
  Here are the tasks in your list:
  1.[T][ ] plan presentation
+____________________________________________________________
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+### Find matching tasks
+
+**Console input:**
+
+```text
+todo read book
+deadline return book /by 2019-06-06
+todo buy groceries
+find book
+find pen
+bye
+```
+
+**Console output:**
+
+```text
+____________________________________________________________
+ ____                  _       
+/ ___|  __ _ _ __   __| |_   _ 
+\___ \ / _` | '_ \ / _` | | | |
+ ___) | (_| | | | | (_| | |_| |
+|____/ \__,_|_| |_|\__,_|\__, |
+                         |___/ 
+Hello! I'm Sandy.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [T][ ] read book
+ Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [D][ ] return book (by: Jun 06 2019)
+ Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [T][ ] buy groceries
+ Now you have 3 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Here are the matching tasks in your list:
+ 1.[T][ ] read book
+ 2.[D][ ] return book (by: Jun 06 2019)
+____________________________________________________________
+____________________________________________________________
+ Here are the matching tasks in your list:
 ____________________________________________________________
 ____________________________________________________________
 Bye. Hope to see you again soon!
@@ -602,6 +716,7 @@ E | 0 | project meeting | Mon 2pm | 4pm
 ```text
 todo
 blah
+find
 deadline submit tax return /by 2019-02-30
 list
 mark abc
@@ -628,6 +743,9 @@ ____________________________________________________________
 ____________________________________________________________
 ____________________________________________________________
  Oops! I do not recognize that command.
+____________________________________________________________
+____________________________________________________________
+ Oops! Please provide a keyword to search for.
 ____________________________________________________________
 ____________________________________________________________
  Oops! Please provide a deadline date in yyyy-MM-dd or d/M/yyyy HHmm format.

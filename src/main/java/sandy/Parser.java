@@ -10,6 +10,7 @@ import sandy.command.AddCommand;
 import sandy.command.Command;
 import sandy.command.DeleteCommand;
 import sandy.command.ExitCommand;
+import sandy.command.FindCommand;
 import sandy.command.ListCommand;
 import sandy.command.MarkCommand;
 import sandy.command.UnmarkCommand;
@@ -32,6 +33,7 @@ public final class Parser {
     private static final String MARK_PREFIX = "mark ";
     private static final String UNMARK_PREFIX = "unmark ";
     private static final String DELETE_PREFIX = "delete ";
+    private static final String FIND_PREFIX = "find ";
     private static final DateTimeFormatter DAY_MONTH_YEAR_TIME_FORMAT =
             DateTimeFormatter.ofPattern("d/M/uuuu HHmm").withResolverStyle(ResolverStyle.STRICT);
 
@@ -51,6 +53,13 @@ public final class Parser {
         }
         if (command.equals("list")) {
             return new ListCommand();
+        }
+        if (command.equals("find") || command.startsWith(FIND_PREFIX)) {
+            String keyword = command.equals("find") ? "" : command.substring(FIND_PREFIX.length()).trim();
+            if (keyword.isEmpty()) {
+                throw new SandyException("Please provide a keyword to search for.");
+            }
+            return new FindCommand(keyword);
         }
         if (command.startsWith(MARK_PREFIX)) {
             return new MarkCommand(parseTaskNumber(command.substring(MARK_PREFIX.length())));

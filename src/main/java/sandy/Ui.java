@@ -1,5 +1,6 @@
 package sandy;
 
+import java.util.List;
 import java.util.Scanner;
 
 import sandy.task.Task;
@@ -81,6 +82,18 @@ public class Ui implements AutoCloseable {
         System.out.println(" Here are the tasks in your list:");
         for (int i = 0; i < tasks.size(); i++) {
             System.out.println(" " + (i + 1) + "." + tasks.asList().get(i));
+        }
+    }
+
+    /**
+     * Displays tasks matching a search keyword.
+     *
+     * @param matchingTasks The tasks that matched the keyword.
+     */
+    public void showMatchingTasks(List<Task> matchingTasks) {
+        System.out.println(" Here are the matching tasks in your list:");
+        for (int i = 0; i < matchingTasks.size(); i++) {
+            System.out.println(" " + (i + 1) + "." + matchingTasks.get(i));
         }
     }
 

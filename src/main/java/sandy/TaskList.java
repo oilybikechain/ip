@@ -3,6 +3,7 @@ package sandy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import sandy.exception.SandyException;
 import sandy.task.Task;
@@ -80,6 +81,23 @@ public class TaskList {
      */
     public List<Task> asList() {
         return Collections.unmodifiableList(tasks);
+    }
+
+    /**
+     * Returns tasks whose descriptions contain the given keyword, ignoring case.
+     *
+     * @param keyword The keyword to search for.
+     * @return Matching tasks in their original order.
+     */
+    public List<Task> findTasks(String keyword) {
+        String normalizedKeyword = keyword.toLowerCase(Locale.ROOT);
+        List<Task> matchingTasks = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task.getDescription().toLowerCase(Locale.ROOT).contains(normalizedKeyword)) {
+                matchingTasks.add(task);
+            }
+        }
+        return Collections.unmodifiableList(matchingTasks);
     }
 
     private void validateTaskIndex(int taskIndex) throws SandyException {
